@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>SiegenthalerQGISFinal</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/origindestinationpaper1_1.js"></script>
+        <script src="data/newspapercity_2.js"></script>
+        <script src="data/Destination_3.js"></script>
+        <script src="data/origtonewsorig_to_news_4.js"></script>
+        <script src="data/origtodestorig_to_dest_5.js"></script>
+        <script src="data/2dataforQGISfinal_6.js"></script>
+        <script src="data/2dataforQGIS2dataforqgisfinal_7.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[27.98506711733495,-110.25242059162345],[49.62959071091775,-64.64883511616863]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleMaps_0');
+        map.getPane('pane_GoogleMaps_0').style.zIndex = 400;
+        var layer_GoogleMaps_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        layer_GoogleMaps_0;
+        map.addLayer(layer_GoogleMaps_0);
+        function pop_origindestinationpaper1_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Merged Origin'] !== null ? autolinker.link(feature.properties['Merged Origin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lat'] !== null ? autolinker.link(feature.properties['orig_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lon'] !== null ? autolinker.link(feature.properties['orig_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Newspaper City'] !== null ? autolinker.link(feature.properties['Newspaper City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lat'] !== null ? autolinker.link(feature.properties['news_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lon'] !== null ? autolinker.link(feature.properties['news_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Destinations (; separator)'] !== null ? autolinker.link(feature.properties['Destinations (; separator)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lat'] !== null ? autolinker.link(feature.properties['dest_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lon'] !== null ? autolinker.link(feature.properties['dest_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_origindestinationpaper1_1_0() {
+            return {
+                pane: 'pane_origindestinationpaper1_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,178,151,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_origindestinationpaper1_1');
+        map.getPane('pane_origindestinationpaper1_1').style.zIndex = 401;
+        map.getPane('pane_origindestinationpaper1_1').style['mix-blend-mode'] = 'normal';
+        var layer_origindestinationpaper1_1 = new L.geoJson(json_origindestinationpaper1_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_origindestinationpaper1_1',
+            layerName: 'layer_origindestinationpaper1_1',
+            pane: 'pane_origindestinationpaper1_1',
+            onEachFeature: pop_origindestinationpaper1_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_origindestinationpaper1_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_origindestinationpaper1_1);
+        map.addLayer(layer_origindestinationpaper1_1);
+        function pop_newspapercity_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Newspaper City'] !== null ? autolinker.link(feature.properties['Newspaper City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(feature.properties['Lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(feature.properties['Long'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_newspapercity_2_0() {
+            return {
+                pane: 'pane_newspapercity_2',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/newspapercity_2.svg',
+            iconSize: [23.56, 23.56]
+        }),
+                interactive: true,
+            }
+        }
+        function style_newspapercity_2_1() {
+            return {
+                pane: 'pane_newspapercity_2',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/newspapercity_2.svg',
+            iconSize: [15.2, 15.2]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_newspapercity_2');
+        map.getPane('pane_newspapercity_2').style.zIndex = 402;
+        map.getPane('pane_newspapercity_2').style['mix-blend-mode'] = 'normal';
+        var layer_newspapercity_2 = new L.geoJson.multiStyle(json_newspapercity_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_newspapercity_2',
+            layerName: 'layer_newspapercity_2',
+            pane: 'pane_newspapercity_2',
+            onEachFeature: pop_newspapercity_2,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_newspapercity_2_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_newspapercity_2_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_newspapercity_2);
+        map.addLayer(layer_newspapercity_2);
+        function pop_Destination_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Destinations (; separator)'] !== null ? autolinker.link(feature.properties['Destinations (; separator)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat'] !== null ? autolinker.link(feature.properties['Lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long'] !== null ? autolinker.link(feature.properties['Long'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_Destination_3_0() {
+            return {
+                pane: 'pane_Destination_3',
+                shape: 'triangle',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,30,42,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Destination_3');
+        map.getPane('pane_Destination_3').style.zIndex = 403;
+        map.getPane('pane_Destination_3').style['mix-blend-mode'] = 'normal';
+        var layer_Destination_3 = new L.geoJson(json_Destination_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Destination_3',
+            layerName: 'layer_Destination_3',
+            pane: 'pane_Destination_3',
+            onEachFeature: pop_Destination_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Destination_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Destination_3);
+        map.addLayer(layer_Destination_3);
+        function pop_origtonewsorig_to_news_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Merged Origin'] !== null ? autolinker.link(feature.properties['Merged Origin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lat'] !== null ? autolinker.link(feature.properties['orig_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lon'] !== null ? autolinker.link(feature.properties['orig_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Newspaper City'] !== null ? autolinker.link(feature.properties['Newspaper City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lat'] !== null ? autolinker.link(feature.properties['news_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lon'] !== null ? autolinker.link(feature.properties['news_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Destinations (; separator)'] !== null ? autolinker.link(feature.properties['Destinations (; separator)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lat'] !== null ? autolinker.link(feature.properties['dest_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lon'] !== null ? autolinker.link(feature.properties['dest_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_origtonewsorig_to_news_4_0() {
+            return {
+                pane: 'pane_origtonewsorig_to_news_4',
+                opacity: 1,
+                color: 'rgba(219,30,42,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_origtonewsorig_to_news_4');
+        map.getPane('pane_origtonewsorig_to_news_4').style.zIndex = 404;
+        map.getPane('pane_origtonewsorig_to_news_4').style['mix-blend-mode'] = 'normal';
+        var layer_origtonewsorig_to_news_4 = new L.geoJson(json_origtonewsorig_to_news_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_origtonewsorig_to_news_4',
+            layerName: 'layer_origtonewsorig_to_news_4',
+            pane: 'pane_origtonewsorig_to_news_4',
+            onEachFeature: pop_origtonewsorig_to_news_4,
+            style: style_origtonewsorig_to_news_4_0,
+        });
+        bounds_group.addLayer(layer_origtonewsorig_to_news_4);
+        map.addLayer(layer_origtonewsorig_to_news_4);
+        function pop_origtodestorig_to_dest_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Merged Origin'] !== null ? autolinker.link(feature.properties['Merged Origin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lat'] !== null ? autolinker.link(feature.properties['orig_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lon'] !== null ? autolinker.link(feature.properties['orig_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Newspaper City'] !== null ? autolinker.link(feature.properties['Newspaper City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lat'] !== null ? autolinker.link(feature.properties['news_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lon'] !== null ? autolinker.link(feature.properties['news_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Destinations (; separator)'] !== null ? autolinker.link(feature.properties['Destinations (; separator)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lat'] !== null ? autolinker.link(feature.properties['dest_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lon'] !== null ? autolinker.link(feature.properties['dest_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_origtodestorig_to_dest_5_0() {
+            return {
+                pane: 'pane_origtodestorig_to_dest_5',
+                opacity: 1,
+                color: 'rgba(145,82,45,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_origtodestorig_to_dest_5');
+        map.getPane('pane_origtodestorig_to_dest_5').style.zIndex = 405;
+        map.getPane('pane_origtodestorig_to_dest_5').style['mix-blend-mode'] = 'normal';
+        var layer_origtodestorig_to_dest_5 = new L.geoJson(json_origtodestorig_to_dest_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_origtodestorig_to_dest_5',
+            layerName: 'layer_origtodestorig_to_dest_5',
+            pane: 'pane_origtodestorig_to_dest_5',
+            onEachFeature: pop_origtodestorig_to_dest_5,
+            style: style_origtodestorig_to_dest_5_0,
+        });
+        bounds_group.addLayer(layer_origtodestorig_to_dest_5);
+        map.addLayer(layer_origtodestorig_to_dest_5);
+        function pop_2dataforQGISfinal_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AdDate'] !== null ? autolinker.link(feature.properties['AdDate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FlightDate'] !== null ? autolinker.link(feature.properties['FlightDate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LetterDate'] !== null ? autolinker.link(feature.properties['LetterDate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RewardinState'] !== null ? autolinker.link(feature.properties['RewardinState'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RewardOutofState'] !== null ? autolinker.link(feature.properties['RewardOutofState'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EnslavedFirstName'] !== null ? autolinker.link(feature.properties['EnslavedFirstName'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EnslavedSex'] !== null ? autolinker.link(feature.properties['EnslavedSex'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EnslavedRaceColor'] !== null ? autolinker.link(feature.properties['EnslavedRaceColor'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MinAge'] !== null ? autolinker.link(feature.properties['MinAge'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MaxAge'] !== null ? autolinker.link(feature.properties['MaxAge'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Height'] !== null ? autolinker.link(feature.properties['Height'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Scars'] !== null ? autolinker.link(feature.properties['Scars'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Clothing'] !== null ? autolinker.link(feature.properties['Clothing'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Possessions'] !== null ? autolinker.link(feature.properties['Possessions'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EnslaverSurname'] !== null ? autolinker.link(feature.properties['EnslaverSurname'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['EnslaverNames'] !== null ? autolinker.link(feature.properties['EnslaverNames'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Wheretoreturnto'] !== null ? autolinker.link(feature.properties['Wheretoreturnto'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AdSubmitter'] !== null ? autolinker.link(feature.properties['AdSubmitter'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['field_19'] !== null ? autolinker.link(feature.properties['field_19'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Merged Origin'] !== null ? autolinker.link(feature.properties['Merged Origin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lat'] !== null ? autolinker.link(feature.properties['orig_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['orig_lon'] !== null ? autolinker.link(feature.properties['orig_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Newspaper City'] !== null ? autolinker.link(feature.properties['Newspaper City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lat'] !== null ? autolinker.link(feature.properties['news_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['news_lon'] !== null ? autolinker.link(feature.properties['news_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Destinations (; separator)'] !== null ? autolinker.link(feature.properties['Destinations (; separator)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lat'] !== null ? autolinker.link(feature.properties['dest_lat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dest_lon'] !== null ? autolinker.link(feature.properties['dest_lon'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_2dataforQGISfinal_6_0() {
+            return {
+                pane: 'pane_2dataforQGISfinal_6',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(61,128,53,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,176,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_2dataforQGISfinal_6');
+        map.getPane('pane_2dataforQGISfinal_6').style.zIndex = 406;
+        map.getPane('pane_2dataforQGISfinal_6').style['mix-blend-mode'] = 'normal';
+        var layer_2dataforQGISfinal_6 = new L.geoJson(json_2dataforQGISfinal_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_2dataforQGISfinal_6',
+            layerName: 'layer_2dataforQGISfinal_6',
+            pane: 'pane_2dataforQGISfinal_6',
+            onEachFeature: pop_2dataforQGISfinal_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_2dataforQGISfinal_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_2dataforQGISfinal_6);
+        map.addLayer(layer_2dataforQGISfinal_6);
+        function pop_2dataforQGIS2dataforqgisfinal_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">AdDate</th>\
+                        <td>' + (feature.properties['AdDate'] !== null ? autolinker.link(feature.properties['AdDate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FlightDate</th>\
+                        <td>' + (feature.properties['FlightDate'] !== null ? autolinker.link(feature.properties['FlightDate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LetterDate</th>\
+                        <td>' + (feature.properties['LetterDate'] !== null ? autolinker.link(feature.properties['LetterDate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">RewardinState</th>\
+                        <td>' + (feature.properties['RewardinState'] !== null ? autolinker.link(feature.properties['RewardinState'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">RewardOutofState</th>\
+                        <td>' + (feature.properties['RewardOutofState'] !== null ? autolinker.link(feature.properties['RewardOutofState'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">EnslavedFirstName</th>\
+                        <td>' + (feature.properties['EnslavedFirstName'] !== null ? autolinker.link(feature.properties['EnslavedFirstName'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">EnslavedSex</th>\
+                        <td>' + (feature.properties['EnslavedSex'] !== null ? autolinker.link(feature.properties['EnslavedSex'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">EnslavedRaceColor</th>\
+                        <td>' + (feature.properties['EnslavedRaceColor'] !== null ? autolinker.link(feature.properties['EnslavedRaceColor'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">MinAge</th>\
+                        <td>' + (feature.properties['MinAge'] !== null ? autolinker.link(feature.properties['MinAge'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">MaxAge</th>\
+                        <td>' + (feature.properties['MaxAge'] !== null ? autolinker.link(feature.properties['MaxAge'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Height</th>\
+                        <td>' + (feature.properties['Height'] !== null ? autolinker.link(feature.properties['Height'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Clothing</th>\
+                        <td>' + (feature.properties['Clothing'] !== null ? autolinker.link(feature.properties['Clothing'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Possessions</th>\
+                        <td>' + (feature.properties['Possessions'] !== null ? autolinker.link(feature.properties['Possessions'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">EnslaverSurname</th>\
+                        <td>' + (feature.properties['EnslaverSurname'] !== null ? autolinker.link(feature.properties['EnslaverSurname'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">EnslaverNames</th>\
+                        <td>' + (feature.properties['EnslaverNames'] !== null ? autolinker.link(feature.properties['EnslaverNames'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AdSubmitter</th>\
+                        <td>' + (feature.properties['AdSubmitter'] !== null ? autolinker.link(feature.properties['AdSubmitter'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Newspaper City</th>\
+                        <td>' + (feature.properties['Newspaper City'] !== null ? autolinker.link(feature.properties['Newspaper City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Destinations (; separator)</th>\
+                        <td>' + (feature.properties['Destinations (; separator)'] !== null ? autolinker.link(feature.properties['Destinations (; separator)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_2dataforQGIS2dataforqgisfinal_7_0() {
+            return {
+                pane: 'pane_2dataforQGIS2dataforqgisfinal_7',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(61,128,53,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,176,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_2dataforQGIS2dataforqgisfinal_7');
+        map.getPane('pane_2dataforQGIS2dataforqgisfinal_7').style.zIndex = 407;
+        map.getPane('pane_2dataforQGIS2dataforqgisfinal_7').style['mix-blend-mode'] = 'normal';
+        var layer_2dataforQGIS2dataforqgisfinal_7 = new L.geoJson(json_2dataforQGIS2dataforqgisfinal_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_2dataforQGIS2dataforqgisfinal_7',
+            layerName: 'layer_2dataforQGIS2dataforqgisfinal_7',
+            pane: 'pane_2dataforQGIS2dataforqgisfinal_7',
+            onEachFeature: pop_2dataforQGIS2dataforqgisfinal_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_2dataforQGIS2dataforqgisfinal_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_2dataforQGIS2dataforqgisfinal_7);
+        map.addLayer(layer_2dataforQGIS2dataforqgisfinal_7);
+            var title = new L.Control();
+            title.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+            title.update = function () {
+                this._div.innerHTML = '<h2>SiegenthalerQGISFinal</h2>';
+            };
+            title.addTo(map);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"FlightDate": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_FlightDate = document.createElement('div');
+            div_FlightDate.id = "div_FlightDate";
+            div_FlightDate.className= "filterselect";
+            document.getElementById("menu").appendChild(div_FlightDate);
+            sel_FlightDate = document.createElement('select');
+            sel_FlightDate.multiple = true;
+            sel_FlightDate.size = 10;
+            sel_FlightDate.id = "sel_FlightDate";
+            var FlightDate_options_str = "<option value='' unselected></option>";
+            sel_FlightDate.onchange = function(){filterFunc()};
+            FlightDate_options_str  += '<option value="NULL">NULL</option>';
+            FlightDate_options_str  += '<option value="0/2/1814">0/2/1814</option>';
+            FlightDate_options_str  += '<option value="01/08/1833">01/08/1833</option>';
+            FlightDate_options_str  += '<option value="01/09/1819">01/09/1819</option>';
+            FlightDate_options_str  += '<option value="01/17/1819">01/17/1819</option>';
+            FlightDate_options_str  += '<option value="02/03/1816">02/03/1816</option>';
+            FlightDate_options_str  += '<option value="03/09/1806">03/09/1806</option>';
+            FlightDate_options_str  += '<option value="03/28/1812">03/28/1812</option>';
+            FlightDate_options_str  += '<option value="04/16/1816">04/16/1816</option>';
+            FlightDate_options_str  += '<option value="05/15/1814">05/15/1814</option>';
+            FlightDate_options_str  += '<option value="06/08/1810">06/08/1810</option>';
+            FlightDate_options_str  += '<option value="07/09/1804">07/09/1804</option>';
+            FlightDate_options_str  += '<option value="09/1796">09/1796</option>';
+            FlightDate_options_str  += '<option value="1/8/1819">1/8/1819</option>';
+            FlightDate_options_str  += '<option value="1/8/1820">1/8/1820</option>';
+            FlightDate_options_str  += '<option value="10/11/1805">10/11/1805</option>';
+            FlightDate_options_str  += '<option value="10/15/1815">10/15/1815</option>';
+            FlightDate_options_str  += '<option value="10/16/1818">10/16/1818</option>';
+            FlightDate_options_str  += '<option value="10/30/1829">10/30/1829</option>';
+            FlightDate_options_str  += '<option value="10/6/1823">10/6/1823</option>';
+            FlightDate_options_str  += '<option value="11/26/1839">11/26/1839</option>';
+            FlightDate_options_str  += '<option value="12/11/1818">12/11/1818</option>';
+            FlightDate_options_str  += '<option value="12/9/1824">12/9/1824</option>';
+            FlightDate_options_str  += '<option value="13/01/1833">13/01/1833</option>';
+            FlightDate_options_str  += '<option value="14/06/1837">14/06/1837</option>';
+            FlightDate_options_str  += '<option value="14/07/1819">14/07/1819</option>';
+            FlightDate_options_str  += '<option value="14/10/1799">14/10/1799</option>';
+            FlightDate_options_str  += '<option value="14/12/1830">14/12/1830</option>';
+            FlightDate_options_str  += '<option value="15-9-1828">15-9-1828</option>';
+            FlightDate_options_str  += '<option value="15/09/18254">15/09/18254</option>';
+            FlightDate_options_str  += '<option value="15/11/1818">15/11/1818</option>';
+            FlightDate_options_str  += '<option value="15/9/1827">15/9/1827</option>';
+            FlightDate_options_str  += '<option value="16/9/1839">16/9/1839</option>';
+            FlightDate_options_str  += '<option value="17/1/1819">17/1/1819</option>';
+            FlightDate_options_str  += '<option value="18/09/1805">18/09/1805</option>';
+            FlightDate_options_str  += '<option value="1815">1815</option>';
+            FlightDate_options_str  += '<option value="1899-12-31T05:00:00Z">1899-12-31T05:00:00Z</option>';
+            FlightDate_options_str  += '<option value="2/9/1819">2/9/1819</option>';
+            FlightDate_options_str  += '<option value="20/06/1816">20/06/1816</option>';
+            FlightDate_options_str  += '<option value="20/07/1861">20/07/1861</option>';
+            FlightDate_options_str  += '<option value="20/6/1816">20/6/1816</option>';
+            FlightDate_options_str  += '<option value="20/9/1838">20/9/1838</option>';
+            FlightDate_options_str  += '<option value="21/12/1830">21/12/1830</option>';
+            FlightDate_options_str  += '<option value="22/8/1822">22/8/1822</option>';
+            FlightDate_options_str  += '<option value="25/06/1820">25/06/1820</option>';
+            FlightDate_options_str  += '<option value="25/08/1832">25/08/1832</option>';
+            FlightDate_options_str  += '<option value="25/08/1861">25/08/1861</option>';
+            FlightDate_options_str  += '<option value="25/12/1823">25/12/1823</option>';
+            FlightDate_options_str  += '<option value="25/8/1813">25/8/1813</option>';
+            FlightDate_options_str  += '<option value="27/07/1800">27/07/1800</option>';
+            FlightDate_options_str  += '<option value="27/12/1832">27/12/1832</option>';
+            FlightDate_options_str  += '<option value="28/3/1812">28/3/1812</option>';
+            FlightDate_options_str  += '<option value="29/06/1814">29/06/1814</option>';
+            FlightDate_options_str  += '<option value="29/12/1809">29/12/1809</option>';
+            FlightDate_options_str  += '<option value="29/6/1814">29/6/1814</option>';
+            FlightDate_options_str  += '<option value="30-5-1829">30-5-1829</option>';
+            FlightDate_options_str  += '<option value="30/06/1820">30/06/1820</option>';
+            FlightDate_options_str  += '<option value="30/07/1848">30/07/1848</option>';
+            FlightDate_options_str  += '<option value="30/10/1834">30/10/1834</option>';
+            FlightDate_options_str  += '<option value="30/6/1818">30/6/1818</option>';
+            FlightDate_options_str  += '<option value="31/7/1825">31/7/1825</option>';
+            FlightDate_options_str  += '<option value="5/1/1812">5/1/1812</option>';
+            FlightDate_options_str  += '<option value="5/20/1820">5/20/1820</option>';
+            FlightDate_options_str  += '<option value="6/8/1810">6/8/1810</option>';
+            FlightDate_options_str  += '<option value="8/1796">8/1796</option>';
+            FlightDate_options_str  += '<option value="8/22/1822">8/22/1822</option>';
+            FlightDate_options_str  += '<option value="9-10-1829">9-10-1829</option>';
+            FlightDate_options_str  += '<option value="9/10/1829">9/10/1829</option>';
+            FlightDate_options_str  += '<option value="?/01/1816">?/01/1816</option>';
+            FlightDate_options_str  += '<option value="?/07/1818">?/07/1818</option>';
+            FlightDate_options_str  += '<option value="?/09/1812">?/09/1812</option>';
+            FlightDate_options_str  += '<option value="?/09/1819">?/09/1819</option>';
+            FlightDate_options_str  += '<option value="August 1808">August 1808</option>';
+            FlightDate_options_str  += '<option value="N/A">N/A</option>';
+            FlightDate_options_str  += '<option value="NA">NA</option>';
+            FlightDate_options_str  += '<option value="NA/2/1815">NA/2/1815</option>';
+            FlightDate_options_str  += '<option value="NA/5/1813">NA/5/1813</option>';
+            FlightDate_options_str  += '<option value="NA/8/1817">NA/8/1817</option>';
+            FlightDate_options_str  += '<option value="XX/9/1812">XX/9/1812</option>';
+            FlightDate_options_str  += '<option value="n/a">n/a</option>';
+            sel_FlightDate.innerHTML = FlightDate_options_str;
+            div_FlightDate.appendChild(sel_FlightDate);
+            var lab_FlightDate = document.createElement('div');
+            lab_FlightDate.innerHTML = 'FlightDate';
+            lab_FlightDate.className = 'filterlabel';
+            div_FlightDate.appendChild(lab_FlightDate);
+            var reset_FlightDate = document.createElement('div');
+            reset_FlightDate.innerHTML = 'clear filter';
+            reset_FlightDate.className = 'filterlabel';
+            reset_FlightDate.onclick = function() {
+                var options = document.getElementById("sel_FlightDate").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_FlightDate.appendChild(reset_FlightDate);
+        </script>
+    </body>
+</html>
